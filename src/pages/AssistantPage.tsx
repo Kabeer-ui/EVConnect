@@ -11,7 +11,8 @@ export const AssistantPage: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputVal, setInputVal] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const isInitialMount = useRef(true);
 
   const suggestionChips = [
     'Find a fast charger near me',
@@ -23,6 +24,7 @@ export const AssistantPage: React.FC = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    isInitialMount.current = true;
     async function init() {
       const initial = await assistantService.getInitialMessages();
       setMessages(initial);
@@ -36,7 +38,21 @@ export const AssistantPage: React.FC = () => {
   }, [initialQuery]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Prevent the entire page from scrolling down when first opening
+    if (isInitialMount.current) {
+      if (messages.length > 0) {
+        isInitialMount.current = false;
+      }
+      return;
+    }
+
+    // Scroll only the chat conversation container to the latest message without forcing the page down
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   }, [messages, isTyping]);
 
   const handleSendPrompt = async (textToSend: string) => {
@@ -106,7 +122,10 @@ export const AssistantPage: React.FC = () => {
       <div className="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-between overflow-hidden min-w-0">
         
         {/* Messages Scroll Area */}
-        <div className="flex-1 overflow-y-auto space-y-4 pr-1 pb-4 min-w-0">
+        <div
+          ref={chatContainerRef}
+          className="flex-1 overflow-y-auto space-y-4 pr-1 pb-4 min-w-0"
+        >
           {messages.map((msg) => {
             const isUser = msg.sender === 'user';
 
@@ -197,8 +216,6 @@ export const AssistantPage: React.FC = () => {
               </div>
             </div>
           )}
-
-          <div ref={messagesEndRef} />
         </div>
 
         {/* Suggestion Chips with overflow containment */}

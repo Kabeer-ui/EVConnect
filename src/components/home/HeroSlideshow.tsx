@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, ArrowRight, Sparkles } from 'lucide-react';
-import {
-  SlideArtworkEVLifestyle,
-  SlideArtworkSustainability,
-  SlideArtworkNetwork
-} from '../common/ArtworkVisuals';
-
 interface Slide {
   id: number;
   kicker: string;
@@ -14,7 +8,9 @@ interface Slide {
   subheading: string;
   ctaText: string;
   ctaLink: string;
-  renderArtwork: () => React.ReactNode;
+  imageSrc: string;
+  imageAlt: string;
+  imagePosition?: string;
 }
 
 const SLIDES: Slide[] = [
@@ -25,7 +21,9 @@ const SLIDES: Slide[] = [
     subheading: 'Find, book and charge at stations around you with verified bay availability.',
     ctaText: 'Explore Chargers',
     ctaLink: '/explore',
-    renderArtwork: () => <SlideArtworkEVLifestyle />
+    imageSrc: '/images/i2.png',
+    imageAlt: 'Family charging an electric vehicle at an EVConnect charging station',
+    imagePosition: 'object-[65%_center] md:object-[72%_center]'
   },
   {
     id: 2,
@@ -34,7 +32,9 @@ const SLIDES: Slide[] = [
     subheading: 'See how your charging journey contributes to a cleaner future without the guesswork.',
     ctaText: 'Explore Your Impact',
     ctaLink: '/impact',
-    renderArtwork: () => <SlideArtworkSustainability />
+    imageSrc: '/images/i1.avif',
+    imageAlt: 'Lush green forest canopy representing clean environmental impact',
+    imagePosition: 'object-center'
   },
   {
     id: 3,
@@ -43,23 +43,22 @@ const SLIDES: Slide[] = [
     subheading: 'Connect drivers, charging networks and smarter journeys across independent operators.',
     ctaText: 'Explore the Network',
     ctaLink: '/explore',
-    renderArtwork: () => <SlideArtworkNetwork />
+    imageSrc: '/images/i3.png',
+    imageAlt: 'Electric vehicle driving along scenic highway route connecting charging networks',
+    imagePosition: 'object-[65%_center] md:object-[70%_center]'
   }
 ];
 
 export const HeroSlideshow: React.FC = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    if (isPaused) return;
-
     const timer = setInterval(() => {
       setCurrentSlideIndex((prev) => (prev + 1) % SLIDES.length);
-    }, 5500);
+    }, 4000);
 
     return () => clearInterval(timer);
-  }, [isPaused]);
+  }, [currentSlideIndex]);
 
   const handlePrev = () => {
     setCurrentSlideIndex((prev) => (prev - 1 + SLIDES.length) % SLIDES.length);
@@ -74,8 +73,6 @@ export const HeroSlideshow: React.FC = () => {
   return (
     <section
       className="relative w-full h-[580px] md:h-[640px] overflow-hidden bg-[#06241C]"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
       aria-label="Featured EV Highlights"
     >
       {/* Slides rendered with crossfade */}
@@ -88,22 +85,26 @@ export const HeroSlideshow: React.FC = () => {
               isActive ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
             }`}
           >
-            {slide.renderArtwork()}
+            <img
+              src={slide.imageSrc}
+              alt={slide.imageAlt}
+              className={`w-full h-full object-cover ${slide.imagePosition || 'object-center'}`}
+              loading={index === 0 ? 'eager' : 'lazy'}
+            />
           </div>
         );
       })}
 
       {/* Measured Dark Gradient Scrim to ensure WCAG 4.5:1 text contrast */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#041B15]/95 via-[#041B15]/75 to-transparent z-20 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#041B15]/95 via-[#041B15]/80 md:via-[#041B15]/70 to-[#041B15]/30 md:to-transparent z-20 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#041B15]/90 via-transparent to-transparent sm:hidden z-20 pointer-events-none" />
 
       {/* Hero Content Overlay (Glassmorphic highlight on text panel) */}
       <div className="relative z-30 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center">
         <div className="max-w-2xl text-white pt-8">
-          {/* Natural human editorial kicker */}
-          <div className="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-emerald-400 mb-3">
+          {/* Editorial kicker */}
+          <div className="text-xs font-semibold tracking-wider uppercase text-emerald-400 mb-3">
             <span>{currentSlide.kicker}</span>
-            <span aria-hidden="true">·</span>
-            <span>Slide 0{currentSlideIndex + 1} of 0{SLIDES.length}</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white font-display mb-4 leading-[1.08] text-balance">

@@ -1,17 +1,37 @@
-# EVConnect
+# EVConnect — EV Charging Station Discovery Platform
 
-EVConnect is a web application prototype focused on helping electric-vehicle (EV) users discover charging stations and explore station information. The project is being developed as part of a DBMS project, with an emphasis on connecting the application to a structured database.
+EVConnect is an electric-vehicle charging platform designed for the Indian EV ecosystem. It aims to make it easier for EV drivers to discover charging stations, compare station details, and plan charging stops with useful information in one place.
 
-> **Project status:** The frontend prototype is available. PostgreSQL integration and CSV data integration are being handled separately and should be considered in progress until verified in the running application.
+As electric-vehicle adoption grows across India, drivers need accessible information about where charging stations are located and what charging options they offer. EVConnect brings station information into a searchable experience, with a focus on Indian charging infrastructure and a database-backed foundation for organizing station, user, and booking information.
 
-## Tech Stack
+## What EVConnect Offers
 
-- **Frontend:** React, TypeScript, Vite
-- **Routing:** React Router
-- **Styling/UI:** Project frontend styles and components
-- **Database:** PostgreSQL (managed through pgAdmin during development)
-- **Data/API integration:** Planned backend/API connection between the frontend and PostgreSQL
-- **Version control:** Git and GitHub
+- **Charging station discovery:** Explore charging stations and review their available details.
+- **Station information:** View location and charging-related attributes such as connector type, charging capacity, operator, pricing, operating hours, and station status where that information is available.
+- **Search and filtering:** Narrow down station options using relevant station attributes.
+- **Booking workflow:** Navigate the station-booking flow and manage booking information.
+- **EV assistant:** Access an assistant interface intended to help users navigate charging-related information.
+- **Impact information:** Explore information related to EV adoption and sustainable mobility.
+
+The availability and accuracy of individual station attributes depend on the data recorded for each station. EVConnect is focused on Indian charging stations; it does not imply that every station has live operational or real-time connector availability data.
+
+## Technology Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React, TypeScript, Vite |
+| Navigation | React Router |
+| Database | PostgreSQL |
+| Database administration | pgAdmin |
+| Version control | Git and GitHub |
+
+The application is being developed with a PostgreSQL relational database to organize station and related application data. The database and application integration work is being carried out alongside the frontend.
+
+## Database Focus
+
+The database component is intended to provide a structured and consistent way to manage EV charging station information and related records. The project’s database work includes designing related tables, defining keys and constraints, and supporting queries needed for station discovery and booking-related workflows.
+
+The station dataset is being prepared for India-focused use. Data quality, missing attributes, and consistency must be considered when importing and querying station records. Database diagrams and finalized schema details will be documented as the design is completed.
 
 ## Team Members
 
@@ -20,62 +40,10 @@ EVConnect is a web application prototype focused on helping electric-vehicle (EV
 | Monish Jain | 1262241544 |
 | Kabeer Barot | 1262241539 |
 
-## Current Prototype Scope
+## Project Goal
 
-The frontend includes pages and flows for exploring charging stations, viewing station details, booking demonstrations, viewing bookings, using an assistant interface, viewing impact information, and managing a profile.
+EVConnect aims to make EV charging information easier to explore and use in the Indian context. By combining a user-facing station discovery experience with a relational database, the project brings together application development and core DBMS concepts such as relational modelling, data integrity, structured queries, and connected application data.
 
-Some current prototype services use mock/sample data and browser local storage. Booking flows should therefore be treated as demonstrations rather than confirmed real-world charging reservations unless and until a live backend is connected.
+## Repository
 
-## Database
-
-The project uses **PostgreSQL** as its intended relational database. The database schema and data integration are being developed separately. The repository documentation will be updated with the final schema, ER diagram, and database workflow once these are finalized.
-
-## Setup and Execution
-
-### Prerequisites
-
-- Node.js and npm
-- Git
-
-### Run the frontend locally
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/Kabeer-ui/EVConnect.git
-   cd EVConnect
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Configure any environment variables required by the project in a local environment file, following the variable names used by the application. Do not commit API keys, database passwords, or other secrets.
-
-4. Start the development server:
-
-   ```bash
-   npm run dev
-   ```
-
-5. Open the local URL printed in the terminal by Vite.
-
-### PostgreSQL
-
-PostgreSQL is part of the project’s database work, but the frontend setup above does not by itself configure or connect a database. Database setup, schema creation, CSV import, and backend connection instructions will be added after the team finalizes and verifies the integration.
-
-## User Workflow
-
-The user workflow will be documented here after the team finalizes the intended steps. It will distinguish between functionality currently available in the prototype and functionality that depends on the PostgreSQL-backed integration.
-
-## Project Repository
-
-- GitHub: https://github.com/Kabeer-ui/EVConnect
-
-## Development Notes
-
-- Keep database credentials and API keys out of source control.
-- Make focused, meaningful commits as features and documentation are completed.
-- Update this README when the database integration and user workflow have been tested so that it reflects the actual state of the project.
+[GitHub Repository](https://github.com/Kabeer-ui/EVConnect)

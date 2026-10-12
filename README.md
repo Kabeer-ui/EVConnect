@@ -1,3 +1,5 @@
+![EVConnect — EV Charging Station Discovery Platform](docs/images/evconnect-banner.png)
+
 # EVConnect — EV Charging Station Discovery Platform
 
 EVConnect is an electric-vehicle charging platform designed for the Indian EV ecosystem. It aims to make it easier for EV drivers to discover charging stations, compare station details, and plan charging stops with useful information in one place.

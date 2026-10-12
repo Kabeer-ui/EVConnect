@@ -21,17 +21,47 @@ The availability and accuracy of individual station attributes depend on the dat
 |---|---|
 | Frontend | React, TypeScript, Vite |
 | Navigation | React Router |
+| Backend API | Node.js, Express |
 | Database | PostgreSQL |
-| Database administration | pgAdmin |
+| Database administration | pgAdmin 4 |
+| Data import | Node.js, `pg`, `csv-parse` |
 | Version control | Git and GitHub |
 
 The application is being developed with a PostgreSQL relational database to organize station and related application data. The database and application integration work is being carried out alongside the frontend.
 
 ## Database Focus
 
-The database component is intended to provide a structured and consistent way to manage EV charging station information and related records. The project’s database work includes designing related tables, defining keys and constraints, and supporting queries needed for station discovery and booking-related workflows.
+The implemented PostgreSQL database currently contains the `charging_stations` and `connectors` tables. The station table stores Open Charge Map records and enriched India-focused station information; connector rows are linked to stations through a foreign key. The schema includes primary keys, an Open Charge Map ID uniqueness constraint, and a unique partial index for source dataset IDs.
 
-The station dataset is being prepared for India-focused use. Data quality, missing attributes, and consistency must be considered when importing and querying station records. Database diagrams and finalized schema details will be documented as the design is completed.
+The enriched station import has been run against the local database. In that run, **1,535 station records were inserted**, **12 rows were skipped** because their IDs or coordinates were missing or invalid, and **2,064 connector rows were inserted**. These are results from the recorded import run, not a guarantee that a fresh database will have identical totals.
+
+The database design and import should continue to be validated for data quality, constraints, normalization, and query correctness. The ER diagram and final schema documentation should reflect the implemented tables separately from planned features.
+
+## Enriched Indian Station Dataset
+
+The enriched CSV contains Indian charging-station details such as station ID, name, address, coordinates, state and city, operator, access type, operating hours, operational status, connector information, pricing, parking fees, rating, and data-verification information. Records with missing IDs or coordinates outside the accepted India bounds are skipped by the importer.
+
+The source CSV is intentionally excluded from Git using `.gitignore`; obtain the dataset separately and place `ev_india_enriched.csv` in the repository root before importing it. Do not commit API keys, database passwords, or the local `.env` file.
+
+From the repository root, after configuring the local `.env` with the PostgreSQL connection variables used by `server/db.js` and the importer, install dependencies and run:
+
+```bash
+npm install
+node server/scripts/import-enriched-stations.js ./ev_india_enriched.csv
+```
+
+The script prints a summary of CSV rows, inserted or updated stations, skipped records, and inserted connector rows. Review that summary and verify the database counts in pgAdmin after running it. The import uses the source station ID to distinguish enriched dataset records from existing Open Charge Map records.
+
+## Current Backend Endpoints
+
+The Express backend runs on port `5000`. Current endpoints include:
+
+- `GET /` — confirms that the backend process is running.
+- `GET /api/health` — checks the PostgreSQL connection and returns database health information.
+- `GET /api/stations/preview` — requests a preview of India station data from Open Charge Map.
+- `POST /api/stations/import` — imports a limited Open Charge Map station set into the database.
+
+These endpoints do not mean that authentication, vehicle profiles, or database-backed booking functionality is complete. Verify the running implementation before describing any planned workflow as implemented.
 
 ## Planned User Journey and Data Flow
 

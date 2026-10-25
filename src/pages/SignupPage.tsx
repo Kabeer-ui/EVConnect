@@ -36,7 +36,7 @@ export const SignupPage: React.FC = () => {
         phone,
         password,
         vehicleBrand,
-        vehicleModel,
+        vehicleModel: selectedVariant ? `${vehicleModel} — ${selectedVariant.variantName}` : vehicleModel,
         batteryCapacity: selectedVariant?.batteryCapacityKwh ?? 0
       });
       navigate('/explore');
@@ -152,7 +152,6 @@ export const SignupPage: React.FC = () => {
                 }}
                 onVariantChange={(id: string, variant: VehicleVariant | null) => {
                   setVariantId(id); setSelectedVariant(variant);
-                  setVehicleModel(variant ? `${vehicleModel} — ${variant.variantName}` : vehicleModel);
                 }}
               />
             </div>

@@ -16,9 +16,9 @@ interface InteractiveMapProps {
   children?: React.ReactNode;
 }
 
-// Default center: San Francisco Bay Area Demo Cluster
-const DEFAULT_CENTER: [number, number] = [37.7785, -122.4280];
-const DEFAULT_ZOOM = 13;
+
+const DEFAULT_CENTER: [number, number] = [20.5937, 78.9629];
+const DEFAULT_ZOOM = 5;
 
 export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   stations,
@@ -49,8 +49,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
     // Create map instance
     const map = L.map(mapContainerRef.current, {
-      center: initialCenter,
-      zoom: initialZoom,
+      center: DEFAULT_CENTER,
+      zoom: DEFAULT_ZOOM,
       zoomControl: false,
       attributionControl: true,
       maxZoom: 18,
@@ -76,6 +76,21 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     const markersLayer = L.layerGroup().addTo(map);
     markersLayerRef.current = markersLayer;
     mapInstanceRef.current = map;
+
+if (stations.length > 0) {
+  const bounds = L.latLngBounds(
+    stations.map(
+      (s) => [s.latitude, s.longitude] as [number, number]
+    )
+  );
+
+  map.fitBounds(bounds, {
+    padding: [40, 40],
+    maxZoom: 6,
+    animate: false,
+  });
+}
+
 
     // Invalidate size once rendered into container
     setTimeout(() => {
@@ -279,8 +294,20 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   };
 
   const handleCenterDemoCluster = () => {
-    mapInstanceRef.current?.flyTo(DEFAULT_CENTER, DEFAULT_ZOOM, { duration: 0.8 });
-  };
+  const map = mapInstanceRef.current;
+  if (!map) return;
+
+  if (userLocation) {
+    map.flyTo(userLocation, 14, { duration: 0.8 });
+  } else if (stations.length > 0) {
+    const bounds = L.latLngBounds(
+      stations.map((s) => [s.latitude, s.longitude])
+    );
+    map.fitBounds(bounds, { padding: [50, 50], animate: true });
+  } else {
+    map.flyTo(DEFAULT_CENTER, DEFAULT_ZOOM, { duration: 0.8 });
+  }
+};
 
   // Browser Geolocation Permission & Location Finder
   const handleRequestUserLocation = () => {
@@ -296,12 +323,16 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
+        console.log('GPS coordinates:', latitude, longitude);
+        console.log('Leaflet map instance:', mapInstanceRef.current);
         const coords: [number, number] = [latitude, longitude];
         setUserLocation(coords);
         setIsLocating(false);
 
         const map = mapInstanceRef.current;
         if (!map) return;
+        console.log('GPS coordinates:', coords);
+        console.log('Map instance:', map);
 
         // Add or move user marker
         if (userMarkerRef.current) {
@@ -329,8 +360,12 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         }
 
         // Fly to user
-        map.flyTo(coords, 14, { duration: 1 });
-
+        console.log('Flying map to:', coords);
+        
+        map.invalidateSize();
+        map.flyTo(coords, 13, { animate: true, duration: 1.2 });
+        
+        setLocationNotice('Map centered on your current location.');
         // Calculate distance to demo cluster
         const clusterLat = DEFAULT_CENTER[0];
         const clusterLng = DEFAULT_CENTER[1];
@@ -404,8 +439,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
           <button
             onClick={handleCenterDemoCluster}
             className="w-9 h-9 rounded-xl bg-[#08241C]/90 hover:bg-[#0E3A2E] text-emerald-300 border border-emerald-700/40 flex items-center justify-center shadow-lg transition-colors backdrop-blur-sm"
-            title="Center on Demo Cluster"
-            aria-label="Center on Demo Cluster"
+            title="Return to your location"
+            aria-label="Return to your location"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
@@ -431,7 +466,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
                 onClick={handleCenterDemoCluster}
                 className="block mt-1 font-bold text-emerald-300 hover:underline"
               >
-                Jump to San Francisco Demo Hubs →
+                Return to your location →
               </button>
             )}
           </div>

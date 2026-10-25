@@ -32,6 +32,43 @@ export const ExplorePage: React.FC = () => {
   const initialFilter = searchParams.get('filter') || '';
 
   const [stations, setStations] = useState<Station[]>([]);
+
+const [userLocation, setUserLocation] = useState<{
+  latitude: number;
+  longitude: number;
+} | null>(null);
+
+const [locationMessage, setLocationMessage] = useState(
+  'Getting your location...'
+);
+
+useEffect(() => {
+  if (!navigator.geolocation) {
+    setLocationMessage('Location is not supported by this browser.');
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      setUserLocation({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      });
+      setLocationMessage('Using your current location');
+    },
+    () => {
+      setLocationMessage(
+        'Location unavailable. Showing stations across India.'
+      );
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 60000,
+    }
+  );
+}, []);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState(initialSearch);

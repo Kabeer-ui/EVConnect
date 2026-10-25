@@ -33,7 +33,7 @@ The application is being developed with a PostgreSQL relational database to orga
 
 ## Database Focus
 
-The implemented PostgreSQL database currently contains the `charging_stations` and `connectors` tables. The station table stores Open Charge Map records and enriched India-focused station information; connector rows are linked to stations through a foreign key. The schema includes primary keys, an Open Charge Map ID uniqueness constraint, and a unique partial index for source dataset IDs.
+The existing PostgreSQL database contains the `charging_stations` and `connectors` tables for station data. The vehicle-catalogue work adds a separate, additive schema for manufacturers, vehicle models and variants, connector standards, charging-compatibility records, and source references. The vehicle migration is designed not to drop or alter the existing charging-station tables. Apply the migration before importing the vehicle CSV files.
 
 The enriched station import has been run against the local database. In that run, **1,535 station records were inserted**, **12 rows were skipped** because their IDs or coordinates were missing or invalid, and **2,064 connector rows were inserted**. These are results from the recorded import run, not a guarantee that a fresh database will have identical totals.
 
@@ -53,6 +53,68 @@ node server/scripts/import-enriched-stations.js ./ev_india_enriched.csv
 ```
 
 The script prints a summary of CSV rows, inserted or updated stations, skipped records, and inserted connector rows. Review that summary and verify the database counts in pgAdmin after running it. The import uses the source station ID to distinguish enriched dataset records from existing Open Charge Map records.
+
+## EV Vehicle Catalogue Dataset
+
+The repository now includes an initial, source-tracked EV vehicle catalogue under `data/vehicles/`. It supports the vehicle-selection workflow and provides structured data for later vehicle-to-charger compatibility checks.
+
+### Dataset files
+
+| File | Purpose |
+|---|---|
+| `ev_vehicle_database.csv` | Main EV vehicle/variant specifications used by the catalogue |
+| `ev_charging_compatibility.csv` | Vehicle-variant and charging-connector compatibility records |
+| `ev_connector_standards.csv` | Reference information about supported connector standards |
+| `ev_sources.csv` | Source references and notes for catalogue data |
+| `ref_manufacturers.csv` | Manufacturer reference records |
+| `ref_vehicle_models.csv` | Vehicle-model reference records |
+
+The current dataset is an initial, limited catalogue—not a complete list of every EV sold in India. It includes selected models from Tata Motors, Mahindra, and MG Motor India. Specification coverage and confidence vary by record. Where values are unknown or need verification, the project preserves source notes/uncertainty rather than treating estimates as confirmed facts.
+
+### PostgreSQL schema
+
+The additive migration is located at:
+
+```text
+server/sql/vehicle-data/001_vehicle_catalog_schema.sql
+```
+
+It creates the relational tables required for vehicle manufacturers, models, variants, connector standards, compatibility records, and data sources. It is intended to be applied to the existing `evconnect_db` database and does not replace the station tables.
+
+### Import the vehicle data
+
+Run these commands from the repository root, assuming PostgreSQL is configured and the server's environment variables are set:
+
+```bash
+cd server
+npm install
+```
+
+Apply the migration to your existing database from the repository root:
+
+```bash
+psql -d evconnect_db -f server/sql/vehicle-data/001_vehicle_catalog_schema.sql
+```
+
+Then import the catalogue from the `server` directory:
+
+```bash
+npm run import:vehicles
+```
+
+The importer reads the six CSV files from `data/vehicles/`, uses a database transaction, and upserts records by stable IDs so the import can be rerun without intentionally duplicating catalogue records. Review the command output and verify the imported records in PostgreSQL/pgAdmin. The `psql` command assumes your local PostgreSQL connection is already configured; otherwise, connect using your usual database host, port, username, and database settings.
+
+### Vehicle catalogue API
+
+The Express backend provides these catalogue endpoints:
+
+- `GET /api/vehicles/manufacturers` — lists manufacturers.
+- `GET /api/vehicles/models?manufacturerId=<id>` — lists models for a selected manufacturer.
+- `GET /api/vehicles/variants?modelId=<id>` — lists variants for a selected model.
+
+The frontend's vehicle selector uses a linked **Manufacturer → Model → Variant** flow and can display available specification information. These endpoints depend on the migration and data import having been run successfully.
+
+**Implementation note:** this work connects the catalogue lookup to PostgreSQL, but it does not by itself mean account registration, user-owned vehicle persistence, or all authentication/profile data has been migrated from frontend/local storage into PostgreSQL. Compatibility data is also limited by the coverage and certainty of the source dataset; do not assume that every EV or charger is represented.
 
 ## Current Backend Endpoints
 

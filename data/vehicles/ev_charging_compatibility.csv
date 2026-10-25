@@ -1,0 +1,27 @@
+support_id,variant_id,connector_id,connector_name,charging_mode,max_supported_power_kw,compatibility_status,source_id,evidence_source_url,verification_status,technical_notes
+1,1,1,Type 2,AC,7.0,direct,1,https://m.arenaev.com/tata_motors_nexon_ev_mr_2023-specs-amps-540.php,secondary_single_source,ArenaEV lists AC Type 2 7 kW.
+2,1,2,CCS2,DC,50.0,direct,1,https://m.arenaev.com/tata_motors_nexon_ev_mr_2023-specs-amps-540.php,secondary_single_source,ArenaEV lists DC CCS2 50 kW.
+3,2,1,Type 2,AC,7.2,direct,4,https://www.cardekho.com:443/tata/nexon-ev/specs,inferred_from_inlet,Type 2 AC inferred from documented CCS-II inlet. AC power conflict: src 6 lists 6.6 kW on-board charger.
+4,2,2,CCS2,DC,50.0,direct,4,https://www.cardekho.com:443/tata/nexon-ev/specs,secondary_single_source,CarDekho lists CCS-II and 50 kW DC.
+5,3,1,Type 2,AC,7.2,direct,2,https://m.arenaev.com/tata_motors_punch_ev_sr_2024-specs-amps-595.php,secondary_corroborated,ArenaEV lists Type 2 3.3 and 7.2 kW; src 7 corroborates 7.2 kW.
+6,3,2,CCS2,DC,50.0,direct,2,https://m.arenaev.com/tata_motors_punch_ev_sr_2024-specs-amps-595.php,secondary_single_source,"ArenaEV lists CCS2 50 kW; src 7 corroborates CCS 2 port, no kW."
+7,4,1,Type 2,AC,7.2,direct,3,https://m.arenaev.com/tata_motors_punch_ev_lr_2024-specs-amps-596.php,secondary_corroborated,ArenaEV lists Type 2 7.2 kW; src 5 lists CCS-II and 7.2 kW AC.
+8,4,2,CCS2,DC,50.0,direct,3,https://m.arenaev.com/tata_motors_punch_ev_lr_2024-specs-amps-596.php,secondary_corroborated,ArenaEV and CarDekho (src 5) both list 50 kW DC.
+9,5,1,Type 2,AC,7.2,direct,6,https://us.smartprix.com/cars/tata_nexon_ev_vs_tata_tiago_ev-cpd1ja62ttfm_pd1esnzyn39.php,inferred_from_inlet,Type 2 AC inferred from documented CCS 2 inlet; 7.2 kW AC per src 6.
+10,5,2,CCS2,DC,30.0,direct,6,https://us.smartprix.com/cars/tata_nexon_ev_vs_tata_tiago_ev-cpd1ja62ttfm_pd1esnzyn39.php,secondary_single_source,Smartprix lists CCS 2 and 30 kW DC.
+11,6,6,GB/T DC,DC,,unknown,19,https://www.bacancytechnology.com/blog/combined-charging-system-for-ev,conflicting,Src 19 says GB/T DC; src 17 says Bharat DC-001 (a modified GB/T). Not resolved.
+12,6,4,Bharat DC-001,DC,15.0,unknown,17,https://bolt.earth/blog/ev-charging-connectors-in-india,conflicting,"Src 17: Bharat DC-001 up to ~15 kW for fleet Tigor EV. Power is the charger standard's limit, not a verified vehicle limit."
+13,7,1,Type 2,AC,11.2,direct,8,https://en.wikipedia.org/wiki/Mahindra_BE_6,inferred_from_inlet,Type 2 AC inferred from documented CCS-II inlet (src 11). 7.2 kW and 11.2 kW wall boxes are offered; vehicle on-board limit not stated.
+14,7,2,CCS2,DC,,direct,11,https://www.meraev.com/compare/mahindra-be-6-and-mahindra-xev-9e,secondary_single_source,CCS-II port per MeraEV (src 11). DC peak power left NULL because sources disagree (140/175/180 kW).
+15,8,1,Type 2,AC,11.2,direct,8,https://en.wikipedia.org/wiki/Mahindra_BE_6,inferred_from_inlet,Type 2 AC inferred from documented CCS-II inlet (src 11). 7.2 kW and 11.2 kW wall boxes are offered; vehicle on-board limit not stated.
+16,8,2,CCS2,DC,,direct,11,https://www.meraev.com/compare/mahindra-be-6-and-mahindra-xev-9e,secondary_single_source,CCS-II port per MeraEV (src 11). DC peak power left NULL because sources disagree (140/175/180 kW).
+17,9,1,Type 2,AC,11.2,direct,9,https://en.wikipedia.org/wiki/Mahindra_XEV_9e,inferred_from_inlet,Type 2 AC inferred from documented CCS-II inlet (src 11). 7.2 kW and 11.2 kW wall boxes are offered; vehicle on-board limit not stated.
+18,9,2,CCS2,DC,,direct,11,https://www.meraev.com/compare/mahindra-be-6-and-mahindra-xev-9e,secondary_single_source,CCS-II port per MeraEV (src 11). DC peak power left NULL because sources disagree (140/175/180 kW).
+19,10,1,Type 2,AC,11.2,direct,9,https://en.wikipedia.org/wiki/Mahindra_XEV_9e,inferred_from_inlet,Type 2 AC inferred from documented CCS-II inlet (src 11). 7.2 kW and 11.2 kW wall boxes are offered; vehicle on-board limit not stated.
+20,10,2,CCS2,DC,,direct,11,https://www.meraev.com/compare/mahindra-be-6-and-mahindra-xev-9e,secondary_single_source,CCS-II port per MeraEV (src 11). DC peak power left NULL because sources disagree (140/175/180 kW).
+21,11,4,Bharat DC-001,DC,,unknown,17,https://bolt.earth/blog/ev-charging-connectors-in-india,conflicting,Src 17 lists Bharat DC-001 for e-Verito; src 19 lists GB/T DC. Not resolved.
+22,11,6,GB/T DC,DC,,unknown,19,https://www.bacancytechnology.com/blog/combined-charging-system-for-ev,conflicting,See Bharat DC-001 row.
+23,12,1,Type 2,AC,7.4,direct,15,https://www.autocarpro.in/news/mg-windsor-features-and-variants-explained-126302?amp=1,inferred_from_inlet,Type 2 AC inferred from CCS-II inlet (src 14). 7.4 kW on Essence/optional; Excite/Exclusive 3.3 kW standard.
+24,12,2,CCS2,DC,45.0,direct,13,https://www.autocarindia.com/cars/mg/windsor/range,secondary_corroborated,Src 13 and 15 list 45 kW; CarDekho (src 14) confirms CCS-II port.
+25,13,1,Type 2,AC,7.4,direct,15,https://www.autocarpro.in/news/mg-windsor-features-and-variants-explained-126302?amp=1,inferred_from_inlet,"Type 2 AC inferred from CCS-II inlet (src 14); 7.4 kW AC per src 13, 15."
+26,13,2,CCS2,DC,60.0,direct,13,https://www.autocarindia.com/cars/mg/windsor/range,secondary_corroborated,Src 13 and 15 list 60 kW DC for the 52.9 kWh pack.

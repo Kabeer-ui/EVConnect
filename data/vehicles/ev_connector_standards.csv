@@ -1,0 +1,7 @@
+connector_id,connector_name,charging_mode,standard_description,reference_source_id,notes
+1,Type 2,AC,IEC 62196-2 AC connector. Five-pin AC section of a CCS2 inlet.,19,Description of the AC section is from source 19. A CCS2 inlet physically accepts a Type 2 AC plug.
+2,CCS2,DC,Combined Charging System Combo 2: Type 2 AC pins plus two DC contacts in one inlet. Benchmark DC standard on Indian public chargers.,18,Sources 17 and 18.
+3,Bharat AC-001,AC,Bharat EV Specification AC charging standard (low-power AC).,19,Source 19 only confirms that Bharat specifications define AC and DC sub-categories. Plug/pin details NOT verified in this dataset.
+4,Bharat DC-001,DC,"Bharat EV Specification DC charging standard; described as a modified GB/T connector with CAN communication, up to 200 V / 120 A (~15 kW).",17,Source 17. Do not treat as interchangeable with GB/T DC or CCS2 without adapter documentation.
+5,GB/T AC,AC,Chinese national standard AC connector (GB/T 20234.2).,,No Indian-market vehicle in this dataset is documented as using it.
+6,GB/T DC,DC,Chinese national standard DC connector (GB/T 20234.3).,19,Source 19 lists it for Tigor XPRES-T and e-Verito (conflicts with source 17).

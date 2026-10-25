@@ -1,0 +1,9 @@
+vehicle_model_id,manufacturer_id,model_name,vehicle_category,body_type,market_status
+1,1,Nexon EV,passenger_car,suv,uncertain
+2,1,Punch EV,passenger_car,suv,uncertain
+3,1,Tiago EV,passenger_car,hatchback,uncertain
+4,1,Tigor EV,passenger_car,unknown,uncertain
+5,2,BE 6,passenger_car,coupe_suv,uncertain
+6,2,XEV 9e,passenger_car,coupe_suv,uncertain
+7,2,e-Verito,passenger_car,sedan,uncertain
+8,3,Windsor EV,passenger_car,suv,uncertain

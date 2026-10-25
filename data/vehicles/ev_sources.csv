@@ -1,0 +1,21 @@
+source_id,source_url,source_organization,source_type,accessed_at,publication_date,supports
+1,https://m.arenaev.com/tata_motors_nexon_ev_mr_2023-specs-amps-540.php,ArenaEV,aggregator_database,2026-10-12,,Tata Nexon EV MR (2023): 30 kWh usable; AC Type 2 7 kW; DC CCS2 50 kW
+2,https://m.arenaev.com/tata_motors_punch_ev_sr_2024-specs-amps-595.php,ArenaEV,aggregator_database,2026-10-12,,Tata Punch.ev SR (2024): 25 kWh usable; AC Type 2 3.3/7.2 kW; DC CCS2 50 kW
+3,https://m.arenaev.com/tata_motors_punch_ev_lr_2024-specs-amps-596.php,ArenaEV,aggregator_database,2026-10-12,,Tata Punch.ev LR (2024): 35 kWh usable; AC Type 2 3.3/7.2 kW; DC CCS2 50 kW
+4,https://www.cardekho.com:443/tata/nexon-ev/specs,CarDekho,aggregator_database,2026-10-12,,Tata Nexon EV: 40.5 kWh; port CCS-II; AC 7.2 kW; DC 50 kW
+5,https://www.cardekho.com/tata/punch-ev/specs,CarDekho,aggregator_database,2026-10-12,,Tata Punch EV: 35 kWh; port CCS-II; AC 7.2 kW; DC 50 kW
+6,https://us.smartprix.com/cars/tata_nexon_ev_vs_tata_tiago_ev-cpd1ja62ttfm_pd1esnzyn39.php,Smartprix,aggregator_database,2026-10-12,,"Tata Tiago EV: port CCS 2; AC 7.2 kW; DC 30 kW. Nexon EV: port CCS 2; AC 7.2 kW wall box, 6.6 kW on-board charger"
+7,https://www.smartprix.com/cars/tata-punch-ev-empowered-ppd1lmyb7pam,Smartprix,aggregator_database,2026-10-12,,Tata Punch EV Empowered (25 kWh): port CCS 2; AC 7.2 kW
+8,https://en.wikipedia.org/wiki/Mahindra_BE_6,Wikipedia,encyclopedia,2026-10-12,,Mahindra BE 6: 59/79 kWh packs; 7.2 and 11.2 kW AC wall boxes; DC 20-80% in 20 min quoted at 140 kW (59 kWh) / 180 kW (79 kWh)
+9,https://en.wikipedia.org/wiki/Mahindra_XEV_9e,Wikipedia,encyclopedia,2026-10-12,,Mahindra XEV 9e: 59/79 kWh LFP packs; 7.2/11.2 kW AC; up to 180 kW DC
+10,https://www.autocarindia.com/car-news/mahindra-be-6-xev-9e-pack-two-variants-add-bigger-79kwh-battery-436008,Autocar India,reputable_publication,2026-10-12,,BE 6 / XEV 9e: 7.2 kW and 11.2 kW AC chargers sold as options; 79 kWh now offered on Pack Two
+11,https://www.meraev.com/compare/mahindra-be-6-and-mahindra-xev-9e,MeraEV,aggregator_database,2026-10-12,,"BE 6 / XEV 9e: charging port CCS-II; charging options 13A, 7.2 kW, 11.2 kW, 180 kW DC"
+12,https://www.motorbeam.com/?p=315259,Motorbeam,reputable_publication,2026-10-12,,BE 6 / XEV 9e: 11.2 kW AC; 175 kW DC fast charger for 20-80% in 20 min
+13,https://www.autocarindia.com/cars/mg/windsor/range,Autocar India,reputable_publication,2026-10-12,,"MG Windsor: 38 kWh (DC up to 45 kW) and 52.9 kWh (DC up to 60 kW); 3.3 kW AC standard, 7.4 kW optional/higher trims"
+14,https://www.cardekho.com/mg/windsor-ev/specs,CarDekho,aggregator_database,2026-10-12,,MG Windsor EV: 38 kWh; charging port CCS-II; AC options 3.3/7.4 kW
+15,https://www.autocarpro.in/news/mg-windsor-features-and-variants-explained-126302?amp=1,Autocar Professional,reputable_publication,2026-10-12,,MG Windsor: Excite/Exclusive 3.3 kW AC; Essence/Essence Pro 7.4 kW AC; 38 kWh up to 45 kW DC; 52.9 kWh up to 60 kW DC
+16,https://www.91wheels.com/cars/mg/cloud-ev,91Wheels,aggregator_database,2026-10-12,,"Competitor battery table: Tigor EV 26 kWh, Xpres-T EV 16.5 kWh"
+17,https://bolt.earth/blog/ev-charging-connectors-in-india,Bolt.Earth,industry_reference,2026-10-12,,"India connector overview: CCS2 now the DC benchmark; Bharat DC-001 = modified GB/T with CAN, up to 200 V/120 A (~15 kW), used by e-Verito, e2o, Tigor EV fleet"
+18,https://www.tatapower.com/glossary/c/ccs2-plug,Tata Power,industry_reference,2026-10-12,,CCS2 definition: Type 2 AC plus two DC contacts in a single inlet
+19,https://www.bacancytechnology.com/blog/combined-charging-system-for-ev,Bacancy Technology,industry_reference,2026-10-12,,Tigor XPRES-T and Mahindra e-Verito use GB/T DC (conflicts with source 17); CCS2 top section = 5-pin Type 2 AC
+20,https://www.etvbharat.com/en/!technology/mahindra-be-6-xev-9e-full-price-list-out-delivery-details-specifications-and-more-enn25020701632,ETV Bharat,reputable_publication,2026-10-12,,BE 6 / XEV 9e: DC fast charging up to 175 kW

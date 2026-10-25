@@ -279,6 +279,56 @@ app.get("/api/stations", async (req, res) => {
 });
 
 
+
+app.get("/api/vehicles/manufacturers", async (req, res) => {
+  try {
+    const result = await pool.query(`SELECT manufacturer_id AS "manufacturerId",
+      manufacturer_name AS "manufacturerName", country_of_origin AS "countryOfOrigin"
+      FROM vehicle_manufacturers ORDER BY manufacturer_name`);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Vehicle manufacturers query failed:", error.message);
+    res.status(500).json({ error: "Vehicle catalogue is not initialized. Run the vehicle schema and importer." });
+  }
+});
+
+app.get("/api/vehicles/models", async (req, res) => {
+  const manufacturerId = Number(req.query.manufacturerId);
+  if (!Number.isInteger(manufacturerId) || manufacturerId <= 0) return res.status(400).json({ error: "A valid manufacturerId is required." });
+  try {
+    const result = await pool.query(`SELECT vehicle_model_id AS "vehicleModelId", manufacturer_id AS "manufacturerId",
+      model_name AS "modelName", vehicle_category AS "vehicleCategory", body_type AS "bodyType", market_status AS "marketStatus"
+      FROM vehicle_models WHERE manufacturer_id = $1 ORDER BY model_name`, [manufacturerId]);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Vehicle models query failed:", error.message);
+    res.status(500).json({ error: "Vehicle catalogue is not initialized." });
+  }
+});
+
+app.get("/api/vehicles/variants", async (req, res) => {
+  const modelId = Number(req.query.modelId);
+  if (!Number.isInteger(modelId) || modelId <= 0) return res.status(400).json({ error: "A valid modelId is required." });
+  try {
+    const result = await pool.query(`SELECT variant_id AS "variantId", vehicle_model_id AS "vehicleModelId",
+      variant_name AS "variantName", model_year_start AS "modelYearStart", model_year_end AS "modelYearEnd",
+      battery_capacity_kwh AS "batteryCapacityKwh", battery_capacity_type AS "batteryCapacityType",
+      ac_connector_type AS "acConnectorType", dc_connector_type AS "dcConnectorType",
+      max_ac_power_kw AS "maxAcPowerKw", max_dc_power_kw AS "maxDcPowerKw",
+      specification_verification_status AS "verificationStatus", notes
+      FROM vehicle_variants WHERE vehicle_model_id = $1 ORDER BY variant_id`, [modelId]);
+    res.json(result.rows.map(row => ({
+      ...row,
+      batteryCapacityKwh: row.batteryCapacityKwh === null ? null : Number(row.batteryCapacityKwh),
+      maxAcPowerKw: row.maxAcPowerKw === null ? null : Number(row.maxAcPowerKw),
+      maxDcPowerKw: row.maxDcPowerKw === null ? null : Number(row.maxDcPowerKw),
+    })));
+  } catch (error) {
+    console.error("Vehicle variants query failed:", error.message);
+    res.status(500).json({ error: "Vehicle catalogue is not initialized." });
+  }
+});
+
 const server = app.listen(PORT, "127.0.0.1", () => {
   console.log(`EVConnect backend running at http://127.0.0.1:${PORT}`);
 });

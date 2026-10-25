@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
+import { VehicleCatalogFields } from '../components/VehicleCatalogFields';
+import { VehicleManufacturer, VehicleModel, VehicleVariant } from '../services/vehicleCatalogService';
 import { Zap, ArrowRight, User, Mail, Phone, Lock, Car } from 'lucide-react';
 
 export const SignupPage: React.FC = () => {
@@ -9,9 +11,12 @@ export const SignupPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [vehicleBrand, setVehicleBrand] = useState('Hyundai');
-  const [vehicleModel, setVehicleModel] = useState('Ioniq 5 Long Range');
-  const [batteryCapacity, setBatteryCapacity] = useState(77);
+  const [manufacturerId, setManufacturerId] = useState('');
+  const [vehicleBrand, setVehicleBrand] = useState('');
+  const [modelId, setModelId] = useState('');
+  const [vehicleModel, setVehicleModel] = useState('');
+  const [variantId, setVariantId] = useState('');
+  const [selectedVariant, setSelectedVariant] = useState<VehicleVariant | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -32,7 +37,7 @@ export const SignupPage: React.FC = () => {
         password,
         vehicleBrand,
         vehicleModel,
-        batteryCapacity: Number(batteryCapacity)
+        batteryCapacity: selectedVariant?.batteryCapacityKwh ?? 0
       });
       navigate('/explore');
     } catch (err) {
@@ -133,36 +138,23 @@ export const SignupPage: React.FC = () => {
                 <span>Primary Electric Vehicle</span>
               </span>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-neutral-600 mb-1">Make</label>
-                  <input
-                    type="text"
-                    value={vehicleBrand}
-                    onChange={(e) => setVehicleBrand(e.target.value)}
-                    className="w-full p-2 rounded-xl bg-white border border-neutral-200 text-xs text-neutral-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-neutral-600 mb-1">Model</label>
-                  <input
-                    type="text"
-                    value={vehicleModel}
-                    onChange={(e) => setVehicleModel(e.target.value)}
-                    className="w-full p-2 rounded-xl bg-white border border-neutral-200 text-xs text-neutral-800"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-neutral-600 mb-1">Usable Battery Capacity (kWh)</label>
-                <input
-                  type="number"
-                  value={batteryCapacity}
-                  onChange={(e) => setBatteryCapacity(Number(e.target.value))}
-                  className="w-full p-2 rounded-xl bg-white border border-neutral-200 text-xs text-neutral-800"
-                />
-              </div>
+              <VehicleCatalogFields
+                manufacturerId={manufacturerId}
+                modelId={modelId}
+                variantId={variantId}
+                onManufacturerChange={(id: string, manufacturer: VehicleManufacturer | null) => {
+                  setManufacturerId(id); setVehicleBrand(manufacturer?.manufacturerName || '');
+                  setModelId(''); setVehicleModel(''); setVariantId(''); setSelectedVariant(null);
+                }}
+                onModelChange={(id: string, model: VehicleModel | null) => {
+                  setModelId(id); setVehicleModel(model?.modelName || '');
+                  setVariantId(''); setSelectedVariant(null);
+                }}
+                onVariantChange={(id: string, variant: VehicleVariant | null) => {
+                  setVariantId(id); setSelectedVariant(variant);
+                  setVehicleModel(variant ? `${vehicleModel} — ${variant.variantName}` : vehicleModel);
+                }}
+              />
             </div>
 
             <button

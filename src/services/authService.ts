@@ -61,8 +61,8 @@ export const authService = {
           brand: data.vehicleBrand,
           model: data.vehicleModel,
           year: 2025,
-          batteryCapacityKwh: data.batteryCapacity || 75,
-          usableRangeKm: Math.round((data.batteryCapacity || 75) * 5.8),
+          batteryCapacityKwh: data.batteryCapacity,
+          usableRangeKm: data.batteryCapacity > 0 ? Math.round(data.batteryCapacity * 5.8) : 0,
           preferredConnector: 'CCS2',
           licensePlate: 'NEW-EV1'
         }

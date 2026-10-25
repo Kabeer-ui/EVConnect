@@ -1,5 +1,10 @@
-# Vehicle Data Import Scripts
+# Vehicle Catalogue Import
 
-Place the script that imports `data/vehicles/*.csv` into PostgreSQL in this folder.
+The importer is `server/scripts/import-vehicle-catalog.js`. Run it from the `server` directory after applying `server/sql/vehicle-data/001_vehicle_catalog_schema.sql`:
 
-Recommended future file: `import-vehicle-data.js` or `import-vehicle-data.py`, depending on the existing project tooling. The importer should validate row counts and foreign-key relationships, and it should be safe to rerun without duplicating records.
+```sh
+npm install
+npm run import:vehicles
+```
+
+It reads the six CSV files from `data/vehicles/`, uses a transaction, and upserts by stable IDs so rerunning it does not duplicate records.

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userService } from '../services/userService';
 import { authService } from '../services/authService';
+import { VehicleCatalogFields } from '../components/VehicleCatalogFields';
+import { VehicleManufacturer, VehicleModel, VehicleVariant } from '../services/vehicleCatalogService';
 import { User, Vehicle, ConnectorType } from '../types';
 import {
   User as UserIcon,
@@ -35,7 +37,10 @@ export const ProfilePage: React.FC = () => {
   const [showAddVehicle, setShowAddVehicle] = useState(false);
   const [newBrand, setNewBrand] = useState('');
   const [newModel, setNewModel] = useState('');
-  const [newCapacity, setNewCapacity] = useState('75');
+  const [newManufacturerId, setNewManufacturerId] = useState('');
+  const [newModelId, setNewModelId] = useState('');
+  const [newVariantId, setNewVariantId] = useState('');
+  const [newVariant, setNewVariant] = useState<VehicleVariant | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -77,14 +82,14 @@ export const ProfilePage: React.FC = () => {
 
   const handleAddVehicleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newBrand || !newModel) return;
+    if (!newBrand || !newModel || !newVariant) return;
 
     await userService.addVehicle({
       brand: newBrand,
-      model: newModel,
-      year: 2025,
-      batteryCapacityKwh: Number(newCapacity) || 75,
-      usableRangeKm: Math.round((Number(newCapacity) || 75) * 5.8),
+      model: `${newModel} — ${newVariant.variantName}`,
+      year: newVariant.modelYearStart || 2025,
+      batteryCapacityKwh: newVariant.batteryCapacityKwh ?? 0,
+      usableRangeKm: 0,
       preferredConnector: 'CCS2',
       licensePlate: `EV-${Math.floor(100 + Math.random() * 900)}`
     });
@@ -94,6 +99,7 @@ export const ProfilePage: React.FC = () => {
     setShowAddVehicle(false);
     setNewBrand('');
     setNewModel('');
+    setNewManufacturerId(''); setNewModelId(''); setNewVariantId(''); setNewVariant(null);
   };
 
   const handleLogout = () => {
@@ -164,39 +170,22 @@ export const ProfilePage: React.FC = () => {
           {showAddVehicle && (
             <form onSubmit={handleAddVehicleSubmit} className="p-4 rounded-2xl bg-neutral-50 border border-neutral-200 space-y-3 text-xs">
               <h4 className="font-bold text-neutral-900">Add New Electric Vehicle</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-neutral-600 mb-1">Make / Brand</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Rivian"
-                    value={newBrand}
-                    onChange={(e) => setNewBrand(e.target.value)}
-                    className="w-full p-2 rounded-xl bg-white border border-neutral-300 text-xs text-neutral-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-neutral-600 mb-1">Model</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. R1T Dual Motor"
-                    value={newModel}
-                    onChange={(e) => setNewModel(e.target.value)}
-                    className="w-full p-2 rounded-xl bg-white border border-neutral-300 text-xs text-neutral-800"
-                  />
-                </div>
-                <div>
-                  <label className="block text-neutral-600 mb-1">Battery (kWh)</label>
-                  <input
-                    type="number"
-                    value={newCapacity}
-                    onChange={(e) => setNewCapacity(e.target.value)}
-                    className="w-full p-2 rounded-xl bg-white border border-neutral-300 text-xs text-neutral-800"
-                  />
-                </div>
-              </div>
+              <VehicleCatalogFields
+                manufacturerId={newManufacturerId}
+                modelId={newModelId}
+                variantId={newVariantId}
+                onManufacturerChange={(id: string, manufacturer: VehicleManufacturer | null) => {
+                  setNewManufacturerId(id); setNewBrand(manufacturer?.manufacturerName || '');
+                  setNewModelId(''); setNewModel(''); setNewVariantId(''); setNewVariant(null);
+                }}
+                onModelChange={(id: string, model: VehicleModel | null) => {
+                  setNewModelId(id); setNewModel(model?.modelName || '');
+                  setNewVariantId(''); setNewVariant(null);
+                }}
+                onVariantChange={(id: string, variant: VehicleVariant | null) => {
+                  setNewVariantId(id); setNewVariant(variant);
+                }}
+              />
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"

@@ -4,6 +4,7 @@ require("dotenv").config({ path: "../.env" });
 const express = require("express");
 const cors = require("cors");
 const pool = require("./db");
+const bcrypt = require("bcryptjs");
 
 const app = express();
 const PORT = 5000;
@@ -326,6 +327,124 @@ app.get("/api/vehicles/variants", async (req, res) => {
   } catch (error) {
     console.error("Vehicle variants query failed:", error.message);
     res.status(500).json({ error: "Vehicle catalogue is not initialized." });
+  }
+});
+
+
+app.post("/api/register", async (req, res) => {
+  const { fullName, email, password } = req.body;
+
+  if (
+    typeof fullName !== "string" ||
+    typeof email !== "string" ||
+    typeof password !== "string" ||
+    !fullName.trim() ||
+    !email.trim() ||
+    password.length < 8
+  ) {
+    return res.status(400).json({
+      error: "Name and email are required; password must be at least 8 characters."
+    });
+  }
+
+  try {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const existing = await pool.query(
+      "SELECT id FROM users WHERE email = $1",
+      [normalizedEmail]
+    );
+
+    if (existing.rows.length > 0) {
+      return res.status(409).json({
+        error: "An account with this email already exists."
+      });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const result = await pool.query(
+      `INSERT INTO users (full_name, email, password_hash)
+       VALUES ($1, $2, $3)
+       RETURNING id, full_name, email, created_at`,
+      [fullName.trim(), normalizedEmail, passwordHash]
+    );
+
+    const user = result.rows[0];
+
+    return res.status(201).json({
+      message: "Registration successful",
+      user: {
+        id: user.id,
+        fullName: user.full_name,
+        email: user.email,
+        createdAt: user.created_at
+      }
+    });
+  } catch (error) {
+    if (error.code === "23505") {
+      return res.status(409).json({
+        error: "An account with this email already exists."
+      });
+    }
+
+    console.error("Registration failed:", error.message);
+    return res.status(500).json({ error: "Registration failed." });
+  }
+});
+
+app.post("/api/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (
+    typeof email !== "string" ||
+    typeof password !== "string" ||
+    !email.trim() ||
+    !password
+  ) {
+    return res.status(400).json({
+      error: "Email and password are required."
+    });
+  }
+
+  try {
+    const result = await pool.query(
+      `SELECT id, full_name, email, password_hash, created_at
+       FROM users
+       WHERE email = $1`,
+      [email.trim().toLowerCase()]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({
+        error: "Invalid email or password."
+      });
+    }
+
+    const user = result.rows[0];
+    const passwordMatches = await bcrypt.compare(
+      password,
+      user.password_hash
+    );
+
+    if (!passwordMatches) {
+      return res.status(401).json({
+        error: "Invalid email or password."
+      });
+    }
+
+    return res.json({
+      message: "Login successful",
+      user: {
+        id: user.id,
+        fullName: user.full_name,
+        email: user.email,
+        createdAt: user.created_at
+      }
+    });
+  } catch (error) {
+    console.error("Login failed:", error.message);
+    return res.status(500).json({ error: "Login failed." });
   }
 });
 

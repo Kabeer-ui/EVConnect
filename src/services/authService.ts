@@ -1,7 +1,8 @@
-import { MOCK_USER } from '../data/mockUser';
+
 import { User } from '../types';
 
 const AUTH_USER_KEY = 'evconnect_auth_user';
+const API_URL = 'http://127.0.0.1:5000/api';
 
 export interface LoginCredentials {
   email: string;
@@ -19,64 +20,131 @@ export interface SignupData {
   batteryCapacity: number;
 }
 
-// In the future this connects to POST /api/auth/login and POST /api/auth/register
+interface ApiUser {
+  id: string | number;
+  fullName?: string;
+  name?: string;
+  email: string;
+  createdAt?: string;
+  created_at?: string;
+}
+
+async function post<T>(endpoint: string, body: unknown): Promise<T> {
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || result.message || 'Request failed');
+  }
+
+  return result as T;
+}
+
+function buildUser(apiUser: ApiUser): User {
+  const createdAt = apiUser.createdAt || apiUser.created_at;
+
+  return {
+    id: String(apiUser.id),
+    name: apiUser.fullName || apiUser.name || 'EVConnect User',
+    email: apiUser.email,
+    phone: '',
+    memberSince: createdAt
+      ? new Date(createdAt).toLocaleDateString('en-US', {
+          month: 'long',
+          year: 'numeric',
+        })
+      : new Date().toLocaleDateString('en-US', {
+          month: 'long',
+          year: 'numeric',
+        }),
+    primaryVehicleId: '',
+    preferredConnector: 'CCS2',
+    vehicles: [],
+    notificationSettings: {
+      bookingReminders: true,
+      stationAlerts: true,
+      impactSummaries: true,
+      emailReceipts: true,
+    },
+  };
+}
+
+function saveUser(user: User): User {
+  localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+  return user;
+}
+
 export const authService = {
   getCurrentUser(): User {
-    try {
-      const stored = localStorage.getItem(AUTH_USER_KEY);
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch {
-      // fallback
+    const stored = localStorage.getItem(AUTH_USER_KEY);
+
+    if (!stored) {
+      throw new Error('No logged-in user. Please log in.');
     }
-    return MOCK_USER;
+
+    return JSON.parse(stored) as User;
   },
 
-  async login(credentials: LoginCredentials): Promise<{ success: boolean; user: User }> {
-    await new Promise((resolve) => setTimeout(resolve, 200));
-    // For now mock success with existing user or adapted email
-    const currentUser = this.getCurrentUser();
-    const updated = {
-      ...currentUser,
-      email: credentials.email
-    };
-    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(updated));
-    return { success: true, user: updated };
+  async login(
+    credentials: LoginCredentials
+  ): Promise<{ success: boolean; user: User }> {
+    if (!credentials.password) {
+      throw new Error('Please enter your password.');
+    }
+
+    const result = await post<{ user: ApiUser }>('/login', {
+      email: credentials.email,
+      password: credentials.password,
+    });
+
+    const user = buildUser(result.user);
+    saveUser(user);
+
+    return { success: true, user };
   },
 
-  async signup(data: SignupData): Promise<{ success: boolean; user: User }> {
-    await new Promise((resolve) => setTimeout(resolve, 250));
-    const newUser: User = {
-      id: `usr-${Math.floor(1000 + Math.random() * 9000)}`,
-      name: data.name,
+  async signup(
+    data: SignupData
+  ): Promise<{ success: boolean; user: User }> {
+    if (!data.password) {
+      throw new Error('Please enter a password.');
+    }
+
+    const result = await post<{ user: ApiUser }>('/register', {
+      fullName: data.name,
       email: data.email,
-      phone: data.phone,
-      memberSince: 'October 2026',
-      primaryVehicleId: 'veh-new-1',
-      preferredConnector: 'CCS2',
-      vehicles: [
+      password: data.password,
+    });
+
+    const user = buildUser(result.user);
+
+    user.phone = data.phone;
+
+    if (data.vehicleBrand && data.vehicleModel) {
+      const vehicleId = `veh-${Date.now()}`;
+
+      user.primaryVehicleId = vehicleId;
+      user.vehicles = [
         {
-          id: 'veh-new-1',
+          id: vehicleId,
           brand: data.vehicleBrand,
           model: data.vehicleModel,
-          year: 2025,
+          year: new Date().getFullYear(),
           batteryCapacityKwh: data.batteryCapacity,
-          usableRangeKm: data.batteryCapacity > 0 ? Math.round(data.batteryCapacity * 5.8) : 0,
+          usableRangeKm: Math.round(data.batteryCapacity * 5.8),
           preferredConnector: 'CCS2',
-          licensePlate: 'NEW-EV1'
-        }
-      ],
-      notificationSettings: {
-        bookingReminders: true,
-        stationAlerts: true,
-        impactSummaries: true,
-        emailReceipts: true
-      }
-    };
+          licensePlate: '',
+        },
+      ];
+    }
 
-    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(newUser));
-    return { success: true, user: newUser };
+    saveUser(user);
+    return { success: true, user };
   },
 
   logout(): void {
@@ -84,6 +152,10 @@ export const authService = {
   },
 
   isAuthenticated(): boolean {
-    return true; // default mock session active
-  }
+    try {
+      return Boolean(localStorage.getItem(AUTH_USER_KEY));
+    } catch {
+      return false;
+    }
+  },
 };
